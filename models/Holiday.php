@@ -19,6 +19,14 @@ use Yii;
  */
 class Holiday extends \yii\db\ActiveRecord
 {
+    public static function find()
+    {
+        $t = static::tableName();
+        return parent::find()
+            ->with('name')
+            ->orderBy("{{{$t}}}.[[date]] ASC");
+    }
+
     /**
      * @inheritdoc
      */
@@ -60,5 +68,21 @@ class Holiday extends \yii\db\ActiveRecord
     public function getName()
     {
         return $this->hasOne(HolidayName::className(), ['id' => 'name_id']);
+    }
+
+    public function getJsonStructure()
+    {
+        $date = (string)$this->date;
+        $formatted = sprintf(
+            '%04d-%02d-%02d',
+            (int)substr($date, 0, 4),
+            (int)ltrim(substr($date, 4, 2), '0'),
+            (int)ltrim(substr($date, 6, 2), '0')
+        );
+        return [
+            'date' => $formatted,
+            'date_int' => strtotime($formatted . '+09:00') * 1000,
+            'name' => $this->name->name,
+        ];
     }
 }
