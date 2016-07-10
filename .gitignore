@@ -4,6 +4,7 @@
 .project
 .settings
 /config/cookie-secret.php
+/db/*.sqlite
 /phpunit.xml
 /vendor
 Thumbs.db
